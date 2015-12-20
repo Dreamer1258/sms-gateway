@@ -1,2 +1,2 @@
-# sms-gateway
-Simple SMS Gateway
+# SMSGateway
+
