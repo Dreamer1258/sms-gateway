@@ -8,53 +8,46 @@ class SmsGateway
 {
     public function __construct()
     {
+        if(!function_exists('curl_version')) {
+            throw new SmsGatewayException('Unable to find cURL!');
+        }
     }
 
     public function send($number, $message)
     {
-        $ch = null;
+        $ch = $this->initCurl();
+        $phpsessid = $this->getHtmlProperty(
+            $this->sendCurlRequest($ch, 'http://darmowabramkasms.net/index.php?page=sendsms', array(
+            'phoneno' => $number,
+                'message' => $message,
+                'action' => 'verify',
+                'ads_check1' => 'js_off',
+        'ads_check2' => 'js_off'
+        )),
+            'PHPSESSID'
+        );
 
-        try {
-            $ch = $this->initCurl();
-            $phpsessid = $this->getHtmlProperty(
-                $this->sendCurlRequest($ch, 'http://darmowabramkasms.net/index.php?page=sendsms', array(
-                    'phoneno' => $number,
-                    'message' => $message,
-                    'action' => 'verify',
-                    'ads_check1' => 'js_off',
-                    'ads_check2' => 'js_off'
-                )),
-                'PHPSESSID'
-            );
+        $this->sendCurlRequest($ch, 'http://darmowabramkasms.net/index.php', array(
+            'PHPSESSID' => $phpsessid,
+            'action' => 'confirmbyuser'
+        ));
 
+        $imagecode = $this->getHtmlProperty(
             $this->sendCurlRequest($ch, 'http://darmowabramkasms.net/index.php', array(
-                'PHPSESSID' => $phpsessid,
-                'action' => 'confirmbyuser'
-            ));
+                'operator' => 'play',
+                'action' => 'confirmprovider'
+            )),
+            'imgcode'
+        );
 
-            $imagecode = $this->getHtmlProperty(
-                $this->sendCurlRequest($ch, 'http://darmowabramkasms.net/index.php', array(
-                    'operator' => 'play',
-                    'action' => 'confirmprovider'
-                )),
-                'imgcode'
-            );
+        $this->sendCurlRequest($ch, 'http://darmowabramkasms.net/index.php?a=sent', array(
+            'imgcode' => $imagecode,
+            'action' => 'useraccepted'
+        ));
 
-            $this->sendCurlRequest($ch, 'http://darmowabramkasms.net/index.php?a=sent', array(
-                'imgcode' => $imagecode,
-                'action' => 'useraccepted'
-            ));
+        $this->closeCurl($ch);
 
-            $this->closeCurl($ch);
-
-            return true;
-
-        } catch (SmsGatewayException $e) {
-            echo $e->getMessage();
-            $this->closeCurl($ch);
-
-            return false;
-        }
+        return true;
     }
 
     public function sendMultiple(array $numbers, $message)
