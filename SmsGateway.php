@@ -2,6 +2,8 @@
 
 namespace Dreamer1258\SmsGateway;
 
+use Dreamer1258\SmsGateway\Exception\SmsGatewayException;
+
 class SmsGateway
 {
     public function __construct()
@@ -115,8 +117,4 @@ class SmsGateway
 
         return isset($matches[1]) ? $matches[1] : null;
     }
-}
-
-class SmsGatewayException extends \Exception
-{
 }
