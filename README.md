@@ -12,12 +12,13 @@ composer require dreamer1258/sms-gateway
 require 'vendor/autoload.php';
 
 use Dreamer1258\SmsGateway\SmsGateway;
+use Dreamer1258\SmsGateway\Exception\SmsGatewayException;
 
 try {
-	$gateway = new SmsGateway();
-	$gateway->send(123456789, 'SMS Message');
+    $gateway = new SmsGateway();
+    $gateway->send(123456789, 'SMS Message');
 }
 catch(SmsGatewayException $e) {
-	echo $e-getMessage();
+    echo $e->getMessage();
 }
 ```
