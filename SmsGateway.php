@@ -8,7 +8,7 @@ class SmsGateway
 {
     public function __construct()
     {
-        if(!function_exists('curl_version')) {
+        if (!function_exists('curl_version')) {
             throw new SmsGatewayException('Unable to find cURL!');
         }
     }
@@ -65,6 +65,11 @@ class SmsGateway
     protected function initCurl()
     {
         $ch = curl_init();
+
+        if (!$ch) {
+            throw new SmsGatewayException('Unable to init cUrl.');
+        }
+
         $cookie_file = '/tmp/' . date('d') . '_cookie.txt';
         curl_setopt_array($ch, array(
             CURLOPT_USERAGENT => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/32.0.1700.107 Chrome/32.0.1700.107 Safari/537.36',
