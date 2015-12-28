@@ -22,7 +22,7 @@
 	"autoload": {
 		"psr-4": {
 			"Dreamer1258\\SmsGateway\\": "",
-			"Dreamer1258\\SmsGateway\\Exception": "Exception"
+			"Dreamer1258\\SmsGateway\\Exception": "Exception\\"
 		}
 	}
 }
